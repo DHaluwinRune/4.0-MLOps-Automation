@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animals-api
+  labels:
+    app: animals-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: animals-api
+  template:
+    metadata:
+      labels:
+        app: animals-api
+    spec:
+      containers:
+        - name: animals-api
+          image: ghcr.io/DHaluwinRune/mlops-animals-api:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_BASE_PATH
+              value: "/app/animal-classification"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: animals-api
+spec:
+  type: NodePort
+  selector:
+    app: animals-api
+  ports:
+    - port: 80
+      targetPort: 8000
+      nodePort: 30080

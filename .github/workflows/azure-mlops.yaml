@@ -1,0 +1,282 @@
+name: azure-mlops
+
+on:
+  # Je kan hem manueel starten
+  workflow_dispatch:
+    inputs:
+      run_training:
+        description: 'Run Azure ML training pipeline'
+        required: false
+        type: boolean
+        default: true
+      deploy_to_kubernetes:
+        description: 'Deploy Docker image to Kubernetes'
+        required: false
+        type: boolean
+        default: true
+  # Optioneel: ook draaien bij push op main
+  push:
+    branches:
+      - main
+
+# Handig: globale omgevingsvariabelen
+env:
+  GROUP: ${{ vars.AZURE_GROUP }}
+  WORKSPACE: ${{ vars.AZURE_WORKSPACE }}
+  LOCATION: ${{ vars.AZURE_LOCATION }}
+
+# jobs:
+#   azure-pipeline:
+#     if: inputs.run_training == true
+#     runs-on: ubuntu-24.04
+
+#     steps:
+#       - name: Check out repository
+#         uses: actions/checkout@v4
+
+#       - name: Azure Login
+#         uses: azure/login@v2
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#       - name: Azure -- Start Compute (only if stopped)
+#         uses: Azure/CLI@v2.2.0
+#         with:
+#           azcliversion: 2.79.0
+#           inlineScript: |
+#             az extension add --name ml -y
+#             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+
+#             # Huidige status van de compute opvragen
+#             STATE=$(az ml compute show \
+#               --name cli-created-machine \
+#               --query "properties.state" -o tsv)
+
+#             echo "Current compute state: $STATE"
+
+#             # Enkel starten als hij niet al Running is
+#             if [ "$STATE" != "Running" ]; then
+#               echo "Compute is not running, starting it now..."
+#               az ml compute start --name cli-created-machine
+#             else
+#               echo "Compute is already running, nothing to do."
+#             fi
+
+#       - name: Azure -- Environment Setup
+#         uses: Azure/CLI@v2.2.0
+#         with:
+#           azcliversion: 2.79.0
+#           inlineScript: |
+#             az extension add --name ml -y
+#             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+#             az ml environment create --file ./environment/pillow.yaml
+#             az ml environment create --file ./environment/tensorflow.yaml
+
+#       - name: Azure -- Component Setup
+#         uses: Azure/CLI@v2.2.0
+#         with:
+#           azcliversion: 2.79.0
+#           inlineScript: |
+#             az extension add --name ml -y
+#             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+#             az ml components create --file ./components/dataprep/dataprep.yaml
+#             az ml components create --file ./components/dataprep/data_split.yaml
+#             az ml components create --file ./components/training/training.yaml
+
+#       - name: Azure -- Pipeline Run
+#         uses: Azure/CLI@v2.2.0
+#         with:
+#           azcliversion: 2.79.0
+#           inlineScript: |
+#             az extension add --name ml -y
+#             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+
+#             az ml job create \
+#               --file ./pipelines/animals-classification.yaml \
+#               --stream \
+#               --set name=animals-classification-${{ github.sha }}-${{ github.run_id }}
+
+#       - name: Azure -- Stop Compute (cleanup)
+#         uses: Azure/CLI@v2.2.0
+#         with:
+#           azcliversion: 2.79.0
+#           inlineScript: |
+#             az extension add --name ml -y
+#             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+#             az ml compute stop --name cli-created-machine
+#         continue-on-error: true
+
+jobs:
+  azure-pipeline:
+    if: inputs.run_training == true
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure -- Create compute
+        uses: Azure/CLI@v2.2.0
+        with:
+          azcliversion: 2.79.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml compute create --file ./environment/compute.yaml
+
+      - name: Azure -- Start Compute (only if stopped)
+        uses: Azure/CLI@v2.2.0
+        with:
+          azcliversion: 2.79.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            STATE=$(az ml compute show --name cli-created-machine --query "properties.state" -o tsv)
+            echo "Current compute state: $STATE"
+            if [ "$STATE" != "Running" ]; then
+              az ml compute start --name cli-created-machine
+            else
+              echo "Compute already running."
+            fi
+
+      - name: Azure -- Environments & Components (looped)
+        uses: Azure/CLI@v2.2.0
+        with:
+          azcliversion: 2.79.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            for ENV in pillow.yaml tensorflow.yaml; do
+              az ml environment create --file "./environment/${ENV}"
+            done
+            for COMPONENT_FILE in \
+              "./components/dataprep/dataprep.yaml" \
+              "./components/dataprep/data_split.yaml" \
+              "./components/training/training.yaml"
+            do
+              az ml components create --file "${COMPONENT_FILE}"
+            done
+
+      - name: Azure -- Pipeline Run
+        uses: Azure/CLI@v2.2.0
+        with:
+          azcliversion: 2.79.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml job create \
+              --file ./pipelines/animals-classification.yaml \
+              --stream \
+              --set name=animals-classification-${{ github.sha }}-${{ github.run_id }}
+
+      - name: Azure -- Stop Compute (cleanup)
+        uses: Azure/CLI@v2.2.0
+        with:
+          azcliversion: 2.79.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+            az ml compute stop --name cli-created-machine
+        continue-on-error: true
+
+  download:
+    needs: azure-pipeline 
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure -- Download Model
+        uses: azure/CLI@v2.2.0
+        with:
+          azcliversion: 2.79.0
+          inlineScript: |
+            az extension add --name ml -y
+            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+
+            # Pak de meest recente versie van het model
+            VERSION=$(az ml model list -n animal-classification --query "[0].version" -o tsv)
+            echo "Latest model version: $VERSION"
+
+            # Download hetzelfde model als in labo 1.3, maar nu in de inference-folder
+            az ml model download \
+              --name animal-classification \
+              --version $VERSION \
+              --download-path ./inference/animal-classification
+
+      - name: Docker -- Upload API code from Inference
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: docker-config
+          path: inference
+
+  deploy:
+    needs: download
+    runs-on: self-hosted
+
+    steps:
+      - name: Docker -- Gather Tags
+        id: docker-meta-data
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/mlops-animals-api
+          tags: |
+            type=ref,event=branch
+            type=sha
+
+      - name: Docker -- Login to GHCR
+        uses: docker/login-action@v3.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker -- Download API Code for Inference
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: docker-config
+          path: inference
+
+      - name: Docker Build and push
+        id: docker_build
+        uses: docker/build-push-action@v5.3.0
+        with:
+          context: ./inference
+          push: true
+          tags: ${{ steps.docker-meta-data.outputs.tags }}
+
+  kubernetes-deploy:
+    needs: deploy
+    if: inputs.deploy_to_kubernetes == true
+    runs-on: self-hosted
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Optioneel: als je KUBECONFIG uit een secret haalt
+      # - name: Configure kubeconfig
+      #   shell: powershell
+      #   run: |
+      #     $env:KUBECONFIG = "${{ secrets.KUBECONFIG_PATH }}"
+      #     echo "Using kubeconfig at $env:KUBECONFIG"
+
+      - name: Apply Kubernetes deployment and service
+        run: |
+          kubectl apply -f kubernetes/animals-api-deployment.yaml
+
+      - name: Check pods
+        run: |
+          kubectl get pods -n default
