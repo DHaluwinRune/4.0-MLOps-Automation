@@ -151,13 +151,13 @@ def main():
     cf_matrix = confusion_matrix(y_test.argmax(axis=1), predictions.argmax(axis=1))
     print(cf_matrix)
 
-    ### TODO for students (for later)
-    ### Find a way to log more information to the Run context.
+    # Save the confusion matrix to the *component output* folder
+    cm_path = os.path.join(output_folder, "confusion_matrix.npy")
+    np.save(cm_path, cf_matrix)
 
-    # Save the confusion matrix to the outputs.
-    np.save(os.path.join(output_folder, '/confusion_matrix.npy'), cf_matrix)
-
+    print(f"Confusion matrix saved to: {cm_path}")
     print("DONE TRAINING")
+
 
 
 if __name__ == "__main__":
