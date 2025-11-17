@@ -21,9 +21,10 @@ on:
 
 # Handig: globale omgevingsvariabelen
 env:
-  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
-  AZURE_WORKSPACE_NAME: ${{ vars.AZURE_WORKSPACE_NAME }}
-  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  AZURE_RESOURCE_GROUP: mlops-rune
+  AZURE_WORKSPACE_NAME: rune-mlops-ws
+  AZURE_LOCATION: westeurope
+
 jobs:
   azure-pipeline:
     if: inputs.run_training == true
