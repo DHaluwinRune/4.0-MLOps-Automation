@@ -39,7 +39,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-            - name: Azure -- Create compute (if needed)
+      - name: Azure -- Create compute (if needed)
         uses: Azure/CLI@v2.2.0
         with:
           azcliversion: 2.79.0
