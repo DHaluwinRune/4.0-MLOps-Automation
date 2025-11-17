@@ -22,7 +22,7 @@ spec:
             - containerPort: 8000
           env:
             - name: MODEL_BASE_PATH
-              value: "/app/animal-classification"
+              value: '/app/animal-classification'
 ---
 apiVersion: v1
 kind: Service
@@ -35,4 +35,4 @@ spec:
   ports:
     - port: 80
       targetPort: 8000
-      nodePort: 30080
+      nodePort: 30081

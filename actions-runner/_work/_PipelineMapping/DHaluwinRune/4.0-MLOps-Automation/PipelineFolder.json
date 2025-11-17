@@ -1,0 +1,12 @@
+﻿{
+  "repositoryName": "DHaluwinRune/4.0-MLOps-Automation",
+  "pipelineDirectory": "4.0-MLOps-Automation",
+  "workspaceDirectory": "4.0-MLOps-Automation\\4.0-MLOps-Automation",
+  "repositories": {
+    "DHaluwinRune/4.0-MLOps-Automation": {
+      "repositoryPath": "4.0-MLOps-Automation\\4.0-MLOps-Automation",
+      "lastRunOn": "11/17/2025 23:07:21 +01:00"
+    }
+  },
+  "lastRunOn": "11/17/2025 23:15:52 +01:00"
+}
