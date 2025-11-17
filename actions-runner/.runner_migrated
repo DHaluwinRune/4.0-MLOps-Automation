@@ -1,0 +1,11 @@
+﻿{
+  "agentId": 2,
+  "agentName": "MSI",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus15.actions.githubusercontent.com/ST0QRHKQvs3IyfkZ9UlXj7NXwz2iuKVaDyjqB8CbDLmOVoh9Sx/",
+  "gitHubUrl": "https://github.com/DHaluwinRune/4.0-MLOps-Automation",
+  "workFolder": "_work",
+  "useV2Flow": true,
+  "serverUrlV2": "https://broker.actions.githubusercontent.com/"
+}
