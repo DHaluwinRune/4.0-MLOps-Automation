@@ -47,14 +47,14 @@ jobs:
             az extension add --name ml -y
             az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
-            echo "Checking if compute 'cli-created-machine' already exists..."
+            echo "Checking if compute 'rune-mlops-ci' already exists..."
 
             if az ml compute show \
-              --name cli-created-machine \
+              --name rune-mlops-ci \
               --resource-group $AZURE_RESOURCE_GROUP \
               --workspace-name $AZURE_WORKSPACE_NAME >/dev/null 2>&1; then
 
-              echo "Compute 'cli-created-machine' already exists, skipping creation."
+              echo "Compute 'rune-mlops-ci' already exists, skipping creation."
 
             else
               echo "Compute not found, creating it now..."
@@ -74,7 +74,7 @@ jobs:
             az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
             STATE=$(az ml compute show \
-              --name cli-created-machine \
+              --name rune-mlops-ci \
               --resource-group $AZURE_RESOURCE_GROUP \
               --workspace-name $AZURE_WORKSPACE_NAME \
               --query "properties.state" -o tsv)
@@ -84,7 +84,7 @@ jobs:
             if [ "$STATE" != "Running" ]; then
               echo "Compute is not running, starting it now..."
               az ml compute start \
-                --name cli-created-machine \
+                --name rune-mlops-ci \
                 --resource-group $AZURE_RESOURCE_GROUP \
                 --workspace-name $AZURE_WORKSPACE_NAME
             else
@@ -141,7 +141,7 @@ jobs:
             az extension add --name ml -y
             az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
             az ml compute stop \
-              --name cli-created-machine \
+              --name rune-mlops-ci \
               --resource-group $AZURE_RESOURCE_GROUP \
               --workspace-name $AZURE_WORKSPACE_NAME
 

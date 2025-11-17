@@ -1,5 +1,5 @@
 $schema: https://azuremlschemas.azureedge.net/latest/computeInstance.schema.json
-name: cli-created-machine
+name: rune-mlops-ci # ik heb hier een nieuwe naam gekozen want de oude naam was cli-created-machine en was al in gebruik
 type: computeinstance
 size: STANDARD_DS3_V2
 schedules:
