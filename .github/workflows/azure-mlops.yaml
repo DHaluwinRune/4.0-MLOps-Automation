@@ -113,11 +113,12 @@ jobs:
               "./components/dataprep/data_split.yaml" \
               "./components/training/training.yaml"
             do
-              az ml components create \
+              az ml component create \
                 --file "${COMPONENT_FILE}" \
                 --resource-group $AZURE_RESOURCE_GROUP \
                 --workspace-name $AZURE_WORKSPACE_NAME
             done
+
 
       - name: Azure -- Pipeline Run
         uses: Azure/CLI@v2.2.0

@@ -136,3 +136,6 @@
 [2025-11-17 14:52:30Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
 [2025-11-17 15:42:41Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
 [2025-11-17 15:42:41Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2025-11-17 16:13:41Z WARN GitHubActionsService] Attempt 1 of GET request to https://broker.actions.githubusercontent.com/message?sessionId=5977ae3c-6acd-4bda-a6fc-8b2fa7eece66&status=Online&runnerVersion=2.329.0&os=Windows&architecture=X64&disableUpdate=false failed (Socket Error: ConnectionReset). The operation will be retried in 10,942 seconds.
+[2025-11-17 16:55:34Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 16:55:34Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
