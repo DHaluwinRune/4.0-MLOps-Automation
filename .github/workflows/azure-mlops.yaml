@@ -21,8 +21,8 @@ on:
 
 # Handig: globale omgevingsvariabelen
 env:
-  GROUP: ${{ vars.AZURE_GROUP }}
-  WORKSPACE: ${{ vars.AZURE_WORKSPACE }}
+  GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+  WORKSPACE: ${{ vars.AZURE_WORKSPACE_NAME }}
   LOCATION: ${{ vars.AZURE_LOCATION }}
 
 # jobs:
@@ -159,7 +159,6 @@ jobs:
               echo "Compute already running."
             fi
 
-
       - name: Azure -- Environments & Components (looped)
         uses: Azure/CLI@v2.2.0
         with:
@@ -167,7 +166,7 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-      
+
             # === Environments (gebruik jouw bestanden) ===
             for ENV in preprocessing.yaml training.yaml; do
               az ml environment create \
@@ -175,7 +174,7 @@ jobs:
                 --resource-group $GROUP \
                 --workspace-name $WORKSPACE
             done
-      
+
             # === Components ===
             for COMPONENT_FILE in \
               "./components/dataprep/dataprep.yaml" \
@@ -187,7 +186,6 @@ jobs:
                 --resource-group $GROUP \
                 --workspace-name $WORKSPACE
             done
-
 
       - name: Azure -- Pipeline Run
         uses: Azure/CLI@v2.2.0
@@ -202,7 +200,6 @@ jobs:
               --workspace-name $WORKSPACE \
               --stream \
               --set name=animals-classification-${{ github.sha }}-${{ github.run_id }}
-
 
       - name: Azure -- Stop Compute (cleanup)
         uses: Azure/CLI@v2.2.0
@@ -244,16 +241,15 @@ jobs:
               --resource-group $GROUP \
               --workspace-name $WORKSPACE \
               --query "[0].version" -o tsv)
-            
+
             echo "Latest model version: $VERSION"
-            
+
             az ml model download \
               --name animal-classification \
               --version $VERSION \
               --resource-group $GROUP \
               --workspace-name $WORKSPACE \
               --download-path ./inference/animal-classification
-
 
       - name: Docker -- Upload API code from Inference
         uses: actions/upload-artifact@v4.3.3
