@@ -6,7 +6,7 @@ display_name: Animals Classification
 experiment_name: classification
 
 inputs:
-  train_test_split_factor: 0.8 # 80% train, 20% test
+  train_test_split_factor: 20
   epochs: 5
 
 outputs:
