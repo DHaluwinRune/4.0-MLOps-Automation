@@ -64,7 +64,7 @@ jobs:
                 --workspace-name $AZURE_WORKSPACE_NAME
             fi
 
-      - name: Azure -- Start Compute (only if stopped)
+      - name: Azure -- Start Compute (ensure rune-mlops-ci running)
         uses: Azure/CLI@v2.2.0
         with:
           azcliversion: 2.79.0
@@ -72,28 +72,26 @@ jobs:
             az extension add --name ml -y
             az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
-            # We willen zeker zijn dat zowel rune-mlops-ci als cjpvm (oude compute) aan staan
-            for COMPUTE in rune-mlops-ci cjpvm; do
-              echo "Checking state for compute '$COMPUTE'..."
+            echo "Checking compute state for 'rune-mlops-ci'..."
 
-              STATE=$(az ml compute show \
-                --name $COMPUTE \
+            STATE=$(az ml compute show \
+              --name rune-mlops-ci \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME \
+              --query "properties.state" -o tsv 2>/dev/null || echo "UNKNOWN")
+
+            echo "Current compute state: '$STATE'"
+
+            if [ "$STATE" != "Running" ]; then
+              echo "Compute is not Running, trying to start it..."
+              az ml compute start \
+                --name rune-mlops-ci \
                 --resource-group $AZURE_RESOURCE_GROUP \
-                --workspace-name $AZURE_WORKSPACE_NAME \
-                --query "properties.state" -o tsv 2>/dev/null || echo "UNKNOWN")
+                --workspace-name $AZURE_WORKSPACE_NAME || echo "Start command failed (maybe already running)."
+            else
+              echo "Compute already Running."
+            fi
 
-              echo "Current compute state for '$COMPUTE': '$STATE'"
-
-              if [ "$STATE" = "Stopped" ]; then
-                echo "Compute '$COMPUTE' is Stopped, starting..."
-                az ml compute start \
-                  --name $COMPUTE \
-                  --resource-group $AZURE_RESOURCE_GROUP \
-                  --workspace-name $AZURE_WORKSPACE_NAME
-              else
-                echo "Compute '$COMPUTE' is in state '$STATE', not calling start."
-              fi
-            done
 
       - name: Azure -- Environments & Components (looped)
         uses: Azure/CLI@v2.2.0
