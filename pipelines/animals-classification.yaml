@@ -6,7 +6,7 @@ display_name: Animals Classification
 experiment_name: classification
 
 inputs:
-  train_test_split_percentage: 20
+  train_test_split_factor: 0.8 # 80% train, 20% test
   epochs: 5
 
 outputs:
@@ -17,7 +17,7 @@ outputs:
 
 settings:
   # default_compute: serverless
-  default_compute: azureml:cli-created-machine
+  default_compute: azureml:azureml:rune-mlops-ci
 
 jobs:
   data_prep_pandas:
@@ -66,7 +66,8 @@ jobs:
       animal_1: ${{parent.jobs.data_prep_pandas.outputs.output_data}}
       animal_2: ${{parent.jobs.data_prep_cats.outputs.output_data}}
       animal_3: ${{parent.jobs.data_prep_dogs.outputs.output_data}}
-      train_test_split_percentage: ${{parent.inputs.train_test_split_percentage}}
+      train_test_split_factor: ${{parent.inputs.train_test_split_factor}}
+
     outputs:
       testing_data:
         mode: rw_mount
