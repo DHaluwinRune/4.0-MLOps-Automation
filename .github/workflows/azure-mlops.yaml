@@ -39,7 +39,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Azure -- Create compute
+            - name: Azure -- Create compute (if needed)
         uses: Azure/CLI@v2.2.0
         with:
           azcliversion: 2.79.0
@@ -47,10 +47,23 @@ jobs:
             az extension add --name ml -y
             az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
-            az ml compute create \
-              --file ./environment/compute.yaml \
+            echo "Checking if compute 'cli-created-machine' already exists..."
+
+            if az ml compute show \
+              --name cli-created-machine \
               --resource-group $AZURE_RESOURCE_GROUP \
-              --workspace-name $AZURE_WORKSPACE_NAME
+              --workspace-name $AZURE_WORKSPACE_NAME >/dev/null 2>&1; then
+
+              echo "Compute 'cli-created-machine' already exists, skipping creation."
+
+            else
+              echo "Compute not found, creating it now..."
+              az ml compute create \
+                --file ./environment/compute.yaml \
+                --resource-group $AZURE_RESOURCE_GROUP \
+                --workspace-name $AZURE_WORKSPACE_NAME
+            fi
+
 
       - name: Azure -- Start Compute (only if stopped)
         uses: Azure/CLI@v2.2.0
