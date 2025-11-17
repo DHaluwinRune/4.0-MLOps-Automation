@@ -151,7 +151,7 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            for ENV in pillow.yaml tensorflow.yaml; do
+            for ENV in preprocessing.yaml training.yaml; do
               az ml environment create --file "./environment/${ENV}"
             done
             for COMPONENT_FILE in \
@@ -185,7 +185,7 @@ jobs:
         continue-on-error: true
 
   download:
-    needs: azure-pipeline 
+    needs: azure-pipeline
     runs-on: ubuntu-24.04
 
     steps:
@@ -198,7 +198,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Azure -- Download Model
-        uses: azure/CLI@v2.2.0
+        uses: Azure/CLI@v2.2.0
         with:
           azcliversion: 2.79.0
           inlineScript: |
