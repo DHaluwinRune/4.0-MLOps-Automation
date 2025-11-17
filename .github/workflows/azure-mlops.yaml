@@ -127,7 +127,11 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            az ml compute create --file ./environment/compute.yaml
+
+            az ml compute create \
+              --file ./environment/compute.yaml \
+              --resource-group $GROUP \
+              --workspace-name $WORKSPACE
 
       - name: Azure -- Start Compute (only if stopped)
         uses: Azure/CLI@v2.2.0
@@ -136,13 +140,25 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            STATE=$(az ml compute show --name cli-created-machine --query "properties.state" -o tsv)
+
+            STATE=$(az ml compute show \
+              --name cli-created-machine \
+              --resource-group $GROUP \
+              --workspace-name $WORKSPACE \
+              --query "properties.state" -o tsv)
+
             echo "Current compute state: $STATE"
+
             if [ "$STATE" != "Running" ]; then
-              az ml compute start --name cli-created-machine
+              echo "Compute is not running, starting it now..."
+              az ml compute start \
+                --name cli-created-machine \
+                --resource-group $GROUP \
+                --workspace-name $WORKSPACE
             else
               echo "Compute already running."
             fi
+
 
       - name: Azure -- Environments & Components (looped)
         uses: Azure/CLI@v2.2.0
@@ -151,16 +167,27 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+      
+            # === Environments (gebruik jouw bestanden) ===
             for ENV in preprocessing.yaml training.yaml; do
-              az ml environment create --file "./environment/${ENV}"
+              az ml environment create \
+                --file "./environment/${ENV}" \
+                --resource-group $GROUP \
+                --workspace-name $WORKSPACE
             done
+      
+            # === Components ===
             for COMPONENT_FILE in \
               "./components/dataprep/dataprep.yaml" \
               "./components/dataprep/data_split.yaml" \
               "./components/training/training.yaml"
             do
-              az ml components create --file "${COMPONENT_FILE}"
+              az ml components create \
+                --file "${COMPONENT_FILE}" \
+                --resource-group $GROUP \
+                --workspace-name $WORKSPACE
             done
+
 
       - name: Azure -- Pipeline Run
         uses: Azure/CLI@v2.2.0
@@ -171,8 +198,11 @@ jobs:
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             az ml job create \
               --file ./pipelines/animals-classification.yaml \
+              --resource-group $GROUP \
+              --workspace-name $WORKSPACE \
               --stream \
               --set name=animals-classification-${{ github.sha }}-${{ github.run_id }}
+
 
       - name: Azure -- Stop Compute (cleanup)
         uses: Azure/CLI@v2.2.0
@@ -181,7 +211,11 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            az ml compute stop --name cli-created-machine
+            az ml compute stop \
+              --name cli-created-machine \
+              --resource-group $GROUP \
+              --workspace-name $WORKSPACE
+
         continue-on-error: true
 
   download:
@@ -205,15 +239,21 @@ jobs:
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
 
-            # Pak de meest recente versie van het model
-            VERSION=$(az ml model list -n animal-classification --query "[0].version" -o tsv)
+            VERSION=$(az ml model list \
+              --name animal-classification \
+              --resource-group $GROUP \
+              --workspace-name $WORKSPACE \
+              --query "[0].version" -o tsv)
+            
             echo "Latest model version: $VERSION"
-
-            # Download hetzelfde model als in labo 1.3, maar nu in de inference-folder
+            
             az ml model download \
               --name animal-classification \
               --version $VERSION \
+              --resource-group $GROUP \
+              --workspace-name $WORKSPACE \
               --download-path ./inference/animal-classification
+
 
       - name: Docker -- Upload API code from Inference
         uses: actions/upload-artifact@v4.3.3
