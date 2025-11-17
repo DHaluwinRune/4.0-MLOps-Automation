@@ -131,3 +131,102 @@
 [2025-11-17 19:36:50Z INFO Terminal] WRITE LINE: Current runner version: '2.329.0'
 [2025-11-17 19:36:50Z INFO Terminal] WRITE LINE: 2025-11-17 19:36:50Z: Listening for Jobs
 [2025-11-17 19:36:50Z INFO JobDispatcher] Set runner/worker IPC timeout to 30 seconds.
+[2025-11-17 19:49:01Z WARN GitHubActionsService] Attempt 1 of GET request to https://broker.actions.githubusercontent.com/message?sessionId=9d8b821e-39ff-4b10-8221-1b322daa9f7a&status=Online&runnerVersion=2.329.0&os=Windows&architecture=X64&disableUpdate=false failed (Socket Error: ConnectionReset). The operation will be retried in 11,094 seconds.
+[2025-11-17 19:58:16Z INFO Runner] Received RunnerRefreshConfigMessage for 'runner' config file
+[2025-11-17 19:58:16Z INFO RunnerConfigUpdater] Verifying runner qualified id: U_kgDOCK9p_g/R_kgDOQWNOmA/self-hosted/2
+[2025-11-17 19:58:16Z INFO HostContext] Well known directory 'Bin': 'C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\bin'
+[2025-11-17 19:58:16Z INFO HostContext] Well known directory 'Root': 'C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner'
+[2025-11-17 19:58:16Z INFO HostContext] Well known config file 'Runner': 'C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.runner'
+[2025-11-17 19:58:16Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 19:58:16Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 19:58:17Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2025-11-17 19:58:17Z INFO ConfigurationStore] Saving runner migrated settings
+[2025-11-17 19:58:17Z INFO ConfigurationStore] Migrated Settings Saved.
+[2025-11-17 19:58:17Z INFO Runner] Runner configuration was updated. Session restart has been scheduled
+[2025-11-17 19:58:17Z INFO Runner] Pending session restart detected and job dispatcher is not busy. Restarting session now.
+[2025-11-17 19:58:17Z INFO JobDispatcher] Shutting down JobDispatcher. Make sure all WorkerDispatcher has finished.
+[2025-11-17 19:58:17Z INFO Runner] Deleting Runner Session...
+[2025-11-17 19:58:17Z INFO Runner] Restarting runner session after config update...
+[2025-11-17 19:58:17Z INFO Runner] Runner configuration was refreshed, restarting session...
+[2025-11-17 19:58:17Z INFO ConfigurationManager] LoadSettings
+[2025-11-17 19:58:17Z INFO ConfigurationStore] IsConfigured()
+[2025-11-17 19:58:17Z INFO ConfigurationStore] IsConfigured: True
+[2025-11-17 19:58:17Z INFO ConfigurationManager] Is configured: True
+[2025-11-17 19:58:17Z INFO ConfigurationManager] Settings Loaded
+[2025-11-17 19:58:17Z INFO Runner] RunAsync
+[2025-11-17 19:58:17Z INFO ConfigurationManager] LoadMigratedSettings
+[2025-11-17 19:58:17Z INFO ConfigurationStore] IsMigratedConfigured()
+[2025-11-17 19:58:17Z INFO ConfigurationStore] IsMigratedConfigured: True
+[2025-11-17 19:58:17Z INFO ConfigurationStore] Read migrated setting file: 400 chars
+[2025-11-17 19:58:17Z INFO ConfigurationManager] Migrated Settings Loaded
+[2025-11-17 19:58:17Z INFO Runner] Loaded migrated settings from .runner_migrated file
+[2025-11-17 19:58:17Z INFO Runner] {
+  "AgentId": 2,
+  "AgentName": "MSI",
+  "PoolId": 1,
+  "PoolName": "Default",
+  "ServerUrl": "https://pipelinesghubeus15.actions.githubusercontent.com/ST0QRHKQvs3IyfkZ9UlXj7NXwz2iuKVaDyjqB8CbDLmOVoh9Sx/",
+  "GitHubUrl": "https://github.com/DHaluwinRune/4.0-MLOps-Automation",
+  "WorkFolder": "_work",
+  "UseV2Flow": true,
+  "ServerUrlV2": "https://broker.actions.githubusercontent.com/"
+}
+[2025-11-17 19:58:17Z INFO Runner] Attempting to create session using migrated settings
+[2025-11-17 19:58:17Z INFO Runner] Using BrokerMessageListener
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] Using provided settings
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] Using migrated settings from .runner_migrated
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] {
+  "AgentId": 2,
+  "AgentName": "MSI",
+  "PoolId": 1,
+  "PoolName": "Default",
+  "ServerUrl": "https://pipelinesghubeus15.actions.githubusercontent.com/ST0QRHKQvs3IyfkZ9UlXj7NXwz2iuKVaDyjqB8CbDLmOVoh9Sx/",
+  "GitHubUrl": "https://github.com/DHaluwinRune/4.0-MLOps-Automation",
+  "WorkFolder": "_work",
+  "UseV2Flow": true,
+  "ServerUrlV2": "https://broker.actions.githubusercontent.com/"
+}
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] Loading Credentials
+[2025-11-17 19:58:17Z INFO ConfigurationStore] HasCredentials()
+[2025-11-17 19:58:17Z INFO ConfigurationStore] stored True
+[2025-11-17 19:58:17Z INFO CredentialManager] GetCredentialProvider
+[2025-11-17 19:58:17Z INFO CredentialManager] Creating type OAuth
+[2025-11-17 19:58:17Z INFO CredentialManager] Creating credential type: OAuth
+[2025-11-17 19:58:17Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] Attempt to create session.
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] Connecting to the Broker Server...
+[2025-11-17 19:58:17Z INFO ConfigurationStore] HasCredentials()
+[2025-11-17 19:58:17Z INFO ConfigurationStore] stored True
+[2025-11-17 19:58:17Z INFO CredentialManager] GetCredentialProvider
+[2025-11-17 19:58:17Z INFO CredentialManager] Creating type OAuth
+[2025-11-17 19:58:17Z INFO CredentialManager] Creating credential type: OAuth
+[2025-11-17 19:58:17Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] VssConnection created
+[2025-11-17 19:58:17Z INFO BrokerMessageListener] Connecting to the Runner server...
+[2025-11-17 19:58:17Z INFO RunnerServer] EstablishVssConnection
+[2025-11-17 19:58:17Z INFO RunnerServer] Establish connection with 100 seconds timeout.
+[2025-11-17 19:58:17Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2025-11-17 19:58:17Z INFO RunnerServer] EstablishVssConnection
+[2025-11-17 19:58:17Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2025-11-17 19:58:17Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2025-11-17 19:58:17Z INFO RunnerServer] EstablishVssConnection
+[2025-11-17 19:58:17Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2025-11-17 19:58:17Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2025-11-17 19:58:18Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2025-11-17 19:58:18Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2025-11-17 19:58:18Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2025-11-17 19:58:18Z INFO BrokerMessageListener] VssConnection created
+[2025-11-17 19:58:18Z INFO Terminal] WRITE LINE: 
+[2025-11-17 19:58:18Z INFO Terminal] WRITE LINE: 
+[2025-11-17 19:58:18Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 19:58:18Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\SCHOOL\HOWEST LES\SEM5 MCT\MLOps\Labo\4.0-MLOps-Automation\actions-runner\.credentials_rsaparams
+[2025-11-17 19:58:19Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2025-11-17 19:58:20Z INFO BrokerMessageListener] Session created.
+[2025-11-17 19:58:20Z INFO Runner] Successfully created session with migrated settings
+[2025-11-17 19:58:20Z INFO Terminal] WRITE LINE: Current runner version: '2.329.0'
+[2025-11-17 19:58:20Z INFO Terminal] WRITE LINE: 2025-11-17 19:58:20Z: Listening for Jobs
+[2025-11-17 19:58:20Z INFO JobDispatcher] Set runner/worker IPC timeout to 30 seconds.
+[2025-11-17 20:03:07Z WARN GitHubActionsService] Attempt 1 of GET request to https://broker.actions.githubusercontent.com/message?sessionId=e1567745-1f3c-4971-b623-dc2816847963&status=Online&runnerVersion=2.329.0&os=Windows&architecture=X64&disableUpdate=false failed (Socket Error: ConnectionReset). The operation will be retried in 10,884 seconds.
+[2025-11-17 20:06:04Z WARN GitHubActionsService] Attempt 1 of GET request to https://broker.actions.githubusercontent.com/message?sessionId=e1567745-1f3c-4971-b623-dc2816847963&status=Online&runnerVersion=2.329.0&os=Windows&architecture=X64&disableUpdate=false failed (Socket Error: ConnectionReset). The operation will be retried in 11,199 seconds.
+[2025-11-17 20:06:47Z WARN GitHubActionsService] Attempt 2 of GET request to https://broker.actions.githubusercontent.com/message?sessionId=e1567745-1f3c-4971-b623-dc2816847963&status=Online&runnerVersion=2.329.0&os=Windows&architecture=X64&disableUpdate=false failed (Socket Error: ConnectionReset). The operation will be retried in 12,721 seconds.
+[2025-11-17 20:07:42Z WARN GitHubActionsService] Attempt 3 of GET request to https://broker.actions.githubusercontent.com/message?sessionId=e1567745-1f3c-4971-b623-dc2816847963&status=Online&runnerVersion=2.329.0&os=Windows&architecture=X64&disableUpdate=false failed (Socket Error: ConnectionReset). The operation will be retried in 16,111 seconds.
