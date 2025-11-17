@@ -17,7 +17,7 @@ outputs:
 
 settings:
   # default_compute: serverless
-  default_compute: azureml:azureml:rune-mlops-ci
+  default_compute: azureml:rune-mlops-ci
 
 jobs:
   data_prep_pandas:
@@ -82,7 +82,7 @@ jobs:
       testing_folder: ${{parent.jobs.data_split.outputs.testing_data}}
       epochs: ${{parent.inputs.epochs}}
     outputs:
-      output_folder: ${{parent.outputs.model}}
+      output_model: ${{parent.outputs.model}}
 
   register:
     type: command
@@ -90,6 +90,6 @@ jobs:
     inputs:
       model_name: animal-classification
       model_type: custom_model
-      model_path: ${{parent.jobs.training.outputs.output_folder}}
+      model_path: ${{parent.jobs.training.outputs.output_model}}
     outputs:
       registration_details_folder: ${{ parent.outputs.registration_details }}
