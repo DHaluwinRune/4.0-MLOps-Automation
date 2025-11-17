@@ -20,7 +20,10 @@ on:
       - main
 
 # Handig: globale omgevingsvariabelen
-
+env:
+  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+  AZURE_WORKSPACE_NAME: ${{ vars.AZURE_WORKSPACE_NAME }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
 jobs:
   azure-pipeline:
     if: inputs.run_training == true
@@ -41,12 +44,12 @@ jobs:
           azcliversion: 2.79.0
           inlineScript: |
             az extension add --name ml -y
-            az configure --defaults group=mlops-rune workspace=mlops-rune-ws location=westeurope
+            az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
             az ml compute create \
               --file ./environment/compute.yaml \
-              --resource-group mlops-rune \
-              --workspace-name mlops-rune-ws
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME
 
       - name: Azure -- Start Compute (only if stopped)
         uses: Azure/CLI@v2.2.0
@@ -54,12 +57,12 @@ jobs:
           azcliversion: 2.79.0
           inlineScript: |
             az extension add --name ml -y
-            az configure --defaults group=mlops-rune workspace=mlops-rune-ws location=westeurope
+            az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
             STATE=$(az ml compute show \
               --name cli-created-machine \
-              --resource-group mlops-rune \
-              --workspace-name mlops-rune-ws \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME \
               --query "properties.state" -o tsv)
 
             echo "Current compute state: $STATE"
@@ -68,8 +71,8 @@ jobs:
               echo "Compute is not running, starting it now..."
               az ml compute start \
                 --name cli-created-machine \
-                --resource-group mlops-rune \
-                --workspace-name mlops-rune-ws
+                --resource-group $AZURE_RESOURCE_GROUP \
+                --workspace-name $AZURE_WORKSPACE_NAME
             else
               echo "Compute already running."
             fi
@@ -80,14 +83,14 @@ jobs:
           azcliversion: 2.79.0
           inlineScript: |
             az extension add --name ml -y
-            az configure --defaults group=mlops-rune workspace=mlops-rune-ws location=westeurope
+            az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
             # === Environments (gebruik jouw bestanden) ===
             for ENV in preprocessing.yaml training.yaml; do
               az ml environment create \
                 --file "./environment/${ENV}" \
-                --resource-group mlops-rune \
-                --workspace-name mlops-rune-ws
+                --resource-group $AZURE_RESOURCE_GROUP \
+                --workspace-name $AZURE_WORKSPACE_NAME
             done
 
             # === Components ===
@@ -98,8 +101,8 @@ jobs:
             do
               az ml components create \
                 --file "${COMPONENT_FILE}" \
-                --resource-group mlops-rune \
-                --workspace-name mlops-rune-ws
+                --resource-group $AZURE_RESOURCE_GROUP \
+                --workspace-name $AZURE_WORKSPACE_NAME
             done
 
       - name: Azure -- Pipeline Run
@@ -108,11 +111,11 @@ jobs:
           azcliversion: 2.79.0
           inlineScript: |
             az extension add --name ml -y
-            az configure --defaults group=mlops-rune workspace=mlops-rune-ws location=westeurope
+            az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
             az ml job create \
               --file ./pipelines/animals-classification.yaml \
-              --resource-group mlops-rune \
-              --workspace-name mlops-rune-ws \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME \
               --stream \
               --set name=animals-classification-${{ github.sha }}-${{ github.run_id }}
 
@@ -122,11 +125,11 @@ jobs:
           azcliversion: 2.79.0
           inlineScript: |
             az extension add --name ml -y
-            az configure --defaults group=mlops-rune workspace=mlops-rune-ws location=westeurope
+            az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
             az ml compute stop \
               --name cli-created-machine \
-              --resource-group mlops-rune \
-              --workspace-name mlops-rune-ws
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME
 
         continue-on-error: true
 
@@ -149,12 +152,12 @@ jobs:
           azcliversion: 2.79.0
           inlineScript: |
             az extension add --name ml -y
-            az configure --defaults group=mlops-rune workspace=mlops-rune-ws location=westeurope
+            az configure --defaults group=$AZURE_RESOURCE_GROUP workspace=$AZURE_WORKSPACE_NAME location=$AZURE_LOCATION
 
             VERSION=$(az ml model list \
               --name animal-classification \
-              --resource-group mlops-rune \
-              --workspace-name mlops-rune-ws \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME \
               --query "[0].version" -o tsv)
 
             echo "Latest model version: $VERSION"
@@ -162,8 +165,8 @@ jobs:
             az ml model download \
               --name animal-classification \
               --version $VERSION \
-              --resource-group mlops-rune \
-              --workspace-name mlops-rune-ws \
+              --resource-group $AZURE_RESOURCE_GROUP \
+              --workspace-name $AZURE_WORKSPACE_NAME \
               --download-path ./inference/animal-classification
 
       - name: Docker -- Upload API code from Inference
